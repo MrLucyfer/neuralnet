@@ -1,2 +1,2 @@
 # Toy Neural Net
-Writing a nn from 0 to hero
+Writing a nn from scratch
