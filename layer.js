@@ -34,7 +34,6 @@ class Layer {
             this.output = tf.relu(tf.add(output, this.bias));
             return output;
         }
-        
     }
 
     print() {
