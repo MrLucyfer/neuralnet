@@ -1,6 +1,5 @@
-let mnist;
-let img;
-let nn;
+const nn = require('../src/nn.js')
+const mnist = require('./mnist.js')
 function oneHot(x) {
     let arr = new Array(10).fill(0);
     arr[x] = 1;
@@ -18,8 +17,8 @@ function normalize(images) {
 }
 
 async function setup() {
-    pixelDensity(1);
-    await loadMNIST((data) => {
+
+    await mnist.loadMNIST((data) => {
         mnist = data;
         console.log("Dataset loaded")
     })
@@ -40,16 +39,12 @@ async function setup() {
     nn = new NeuralNet();
 
     //Añadimos capas a la nn
-    nn.add(new Layer(784, 'relu', true));
-    nn.add(new Layer(32));
-    // //nn.add(new Layer(64));
-    nn.add(new Layer(10, 'softmax'));
-    nn.compile();
-    nn.saveModel('model')    
+    nn.add(new Layer([784, 32], 'relu', true));
+    nn.add(new Layer([32, 10], 'softmax'));
+
+    nn.compile(); 
     //Entrenamos la nn
-    //nn.train(dataset, 10)
-    createCanvas(200, 200);
+    nn.train(dataset, 10)
 }
 
-function draw() {
-}
+setup()

@@ -32,9 +32,9 @@ class NeuralNet {
         for(let i = 0; i < epochs; i++) {
             dataset = dataset.shuffle(3)
             await dataset.forEachAsync((data) => {
-                const ys = tf.tensor1d(data.y);
+                const ys = tf.tensor1d(data.output);
                 opt.minimize(() => {
-                    const output = this.feedForward(data.X)
+                    const output = this.feedForward(data.input)
                     const error = tf.metrics.categoricalCrossentropy(ys, output);
                     return error.asScalar()
                 })
@@ -90,7 +90,7 @@ class NeuralNet {
 
     predict(X) {
         const prediction = this.feedForward(X);
-        prediction.print();
+        return prediction.argMax();
     } 
 }
 

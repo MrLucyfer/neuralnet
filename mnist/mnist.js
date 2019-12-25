@@ -1,3 +1,5 @@
+const fetch = require('node-fetch')
+
 function loadMNIST(callback) {
   let mnist = {};
   let files = {
@@ -40,4 +42,9 @@ async function loadFile(file) {
     return dataArr ;
   }
   return data;
+}
+
+
+module.exports = {
+  loadMNIST
 }
