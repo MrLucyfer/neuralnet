@@ -1,3 +1,6 @@
+const tf = require('@tensorflow/tfjs');
+require('@tensorflow/tfjs-node');
+
 class NeuralNet {
     constructor() {
         this.netStruct = new Array();
@@ -9,10 +12,11 @@ class NeuralNet {
     }
 
     compile() {
-        this.netStruct[0].init();
-        for(let i = 1; i < this.netStruct.length; i++) {
-            this.netStruct[i].init(this.netStruct[i-1].shape)
-        }
+      for(let i = 0; i < this.netStruct.length; i++) {
+        this.netStruct[i].init();
+        //console.log(this.netStruct[i].shape)
+      }
+      this.netStruct[this.netStruct.length - 1].output = true;
     }
 
     feedForward(X) {
@@ -20,7 +24,7 @@ class NeuralNet {
         for(let i = 1; i < this.netStruct.length; i++) {
             output = this.netStruct[i].weightSum(output);
         }
-        return this.netStruct[this.netStruct.length - 1].output
+        return this.netStruct[this.netStruct.length - 1].sumOutput
     }
 
     async train(dataset, epochs=0) {
@@ -78,8 +82,18 @@ class NeuralNet {
         saveJSON(obj, `${filename}.json`)
     }
 
+    printLayers() {
+        for(let layer of this.netStruct) {
+            layer.print()
+        }
+    }
+
     predict(X) {
         const prediction = this.feedForward(X);
         prediction.print();
     } 
+}
+
+module.exports = {
+  NeuralNet
 }

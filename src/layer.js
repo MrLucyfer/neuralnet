@@ -1,38 +1,39 @@
+const tf = require('@tensorflow/tfjs');
+require('@tensorflow/tfjs-node');
+
 class Layer {
-    constructor(shape, activation = 'relu', input = false) {
+    constructor(shape, activation = 'relu', input=false) {
         this.input = input;
-        this.shape = shape
+        this.shape = shape;
+        this.output = false;
         this.weights;
         this.activation = activation;
-        this.bias = tf.variable(tf.randomUniform([1, this.shape], -1, 1));
-        this.output;
+        this.bias = tf.variable(tf.randomUniform([this.shape[1]], -1, 1));
+        this.sumOutput;
         this.variables;
     }
 
-    init(inputShape) {
-        if(!this.input) {
-            this.weights = tf.variable(tf.randomUniform([inputShape, this.shape], -1, 1),true);
-        } else {
-            this.weights = tf.variable(tf.randomUniform([this.shape, this.shape], -1, 1),true);
-        }
-
-        this.variables = [this.weights, this.bias];
+    init() {
+        this.weights = tf.variable(tf.randomUniform(this.shape, -1, 1),true);
     }
 
     weightSum(input) {
-        if(this.input == true) {
+        if(this.input) {
             input = tf.tensor1d(input);
-            let output = tf.dot(input, this.weights);
-            this.output = tf.relu(tf.add(output, this.bias));
-            return output;
-        } else if(this.activation == 'softmax') {
-            let output = tf.dot(input, this.weights)
-            this.output = tf.softmax(tf.add(output, this.bias));
-            return output;
+            //console.log(input.shape)
+            this.sumOutput = input.dot(this.weights).add(this.bias);
+            this.sumOutput = tf.relu(this.sumOutput);
+            return this.sumOutput;
+        } else if(this.output) {
+            //console.log(input.shape)
+            this.sumOutput = input.dot(this.weights).add(this.bias);
+            this.sumOutput = tf.softmax(this.sumOutput);
+            return this.sumOutput;
         } else {
-            let output = tf.dot(input, this.weights)
-            this.output = tf.relu(tf.add(output, this.bias));
-            return output;
+            //console.log(input.shape)
+            this.sumOutput = input.dot(this.weights).add(this.bias);
+            this.sumOutput = tf.relu(this.sumOutput);
+            return this.sumOutput;
         }
     }
 
@@ -40,3 +41,5 @@ class Layer {
         this.weights.print();
     }
 }
+
+module.exports = {Layer};
